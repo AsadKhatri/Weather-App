@@ -35,7 +35,7 @@ The app includes two main screens:
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/AsadKhatri/Weather-App.git
 cd WeatherApp
 ```
 
