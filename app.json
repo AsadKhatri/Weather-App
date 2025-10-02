@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app needs access to location to show weather for your current location.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs access to location to show weather for your current location."
+      }
     },
     "android": {
       "adaptiveIcon": {
