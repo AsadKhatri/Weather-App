@@ -103,8 +103,14 @@ WeatherApp/
 │   └── locationService.ts      # Location and geocoding services
 ├── types/                       # TypeScript type definitions
 │   └── weather.ts              # Weather-related types
-└── config/                      # App constants and themes
-    └── api.ts                  # API configuration
+├── config/                      # App constants and themes
+│   └── api.ts                  # API configuration
+├── constants/                   # App constants
+│   └── theme.ts                # Theme colors and fonts
+└── hooks/                       # Custom React hooks
+    ├── use-color-scheme.ts     # Color scheme detection
+    ├── use-color-scheme.web.ts # Web color scheme
+    └── use-theme-color.ts      # Theme color utilities
 ```
 
 ## API Configuration 🔧
