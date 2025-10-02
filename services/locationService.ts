@@ -19,22 +19,22 @@ export class LocationService {
         accuracy: Location.Accuracy.Balanced,
       });
 
-      console.log('Location coordinates:', location.coords.latitude, location.coords.longitude);
+      console.log('Got coords:', location.coords.latitude, location.coords.longitude);
 
-      // Reverse geocoding to get city name
+      // try to get city name from coordinates
       const reverseGeocode = await Location.reverseGeocodeAsync({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
 
-      console.log('Reverse geocode result:', reverseGeocode);
+      console.log('Geocode result:', reverseGeocode);
 
       if (reverseGeocode.length > 0) {
         const address = reverseGeocode[0];
         const cityName = address.city || address.region || address.district || 'Current Location';
         const countryName = address.country || 'Unknown';
         
-        console.log('City found:', cityName, countryName);
+        console.log('Found city:', cityName, countryName);
         
         return {
           name: cityName,
@@ -44,7 +44,7 @@ export class LocationService {
         };
       }
 
-      console.log('No reverse geocode data, using coordinates');
+      console.log('No city data, using coords');
       return {
         name: 'Current Location',
         country: 'Unknown',
@@ -59,7 +59,7 @@ export class LocationService {
 
   static async searchLocation(query: string): Promise<LocationType[]> {
     try {
-      // Use OpenWeatherMap Geocoding API for better results
+      // using openweather geocoding api
       const API_KEY = '460f0eef75944641e731ea9b807a42b8';
       const response = await fetch(
         `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${API_KEY}`
@@ -79,7 +79,7 @@ export class LocationService {
       }));
     } catch (error) {
       console.error('Error searching location:', error);
-      // Fallback to Expo geocoding if API fails
+      // fallback to expo geocoding
       try {
         const geocodeResults = await Location.geocodeAsync(query);
         return geocodeResults.map((result, index) => ({
@@ -105,7 +105,7 @@ export class LocationService {
     lat2: number,
     lon2: number
   ): number {
-    const R = 6371; // Earth's radius in kilometers
+    const R = 6371; // earth radius in km
     const dLat = this.deg2rad(lat2 - lat1);
     const dLon = this.deg2rad(lon2 - lon1);
     const a =
@@ -115,7 +115,7 @@ export class LocationService {
         Math.sin(dLon / 2) *
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in kilometers
+    const distance = R * c; // distance in km
     return distance;
   }
 

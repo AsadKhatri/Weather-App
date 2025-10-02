@@ -67,7 +67,7 @@ export class WeatherAPI {
         this.getForecast(lat, lon),
       ]);
 
-      // Transform the API response to match our WeatherData interface
+      // convert api response to our format
       const weatherData: WeatherData = {
         current: {
           temp: currentResponse.main.temp,
@@ -111,7 +111,7 @@ export class WeatherAPI {
   }
 
   getWeatherIcon(iconCode: string): string {
-    // Map OpenWeatherMap icon codes to emoji or icon names
+    // weather icon mapping
     const iconMap: Record<string, string> = {
       '01d': '☀️', // clear sky day
       '01n': '🌙', // clear sky night
@@ -141,7 +141,7 @@ export class WeatherAPI {
   }
 
   formatWindSpeed(speed: number): string {
-    return `${Math.round(speed * 3.6)} km/h`; // Convert m/s to km/h
+    return `${Math.round(speed * 3.6)} km/h`; // m/s to km/h
   }
 
   formatHumidity(humidity: number): string {
@@ -161,7 +161,7 @@ export class WeatherAPI {
   private processDailyForecast(forecastList: any[]): any[] {
     const dailyData: { [key: string]: any } = {};
     
-    // Group forecast data by day
+    // group by day
     forecastList.forEach((item: any) => {
       const date = new Date(item.dt * 1000);
       const dayKey = date.toDateString();
@@ -184,17 +184,17 @@ export class WeatherAPI {
           items: [item]
         };
       } else {
-        // Update min/max temperatures
+        // update min/max temps
         dailyData[dayKey].main.temp_min = Math.min(dailyData[dayKey].main.temp_min, item.main.temp_min);
         dailyData[dayKey].main.temp_max = Math.max(dailyData[dayKey].main.temp_max, item.main.temp_max);
-        dailyData[dayKey].main.humidity = item.main.humidity; // Use latest humidity
-        dailyData[dayKey].wind = item.wind; // Use latest wind data
-        dailyData[dayKey].pop = Math.max(dailyData[dayKey].pop, item.pop); // Use max precipitation
+        dailyData[dayKey].main.humidity = item.main.humidity; // latest humidity
+        dailyData[dayKey].wind = item.wind; // latest wind
+        dailyData[dayKey].pop = Math.max(dailyData[dayKey].pop, item.pop); // max precipitation
         dailyData[dayKey].items.push(item);
       }
     });
     
-    // Convert to array and take first 7 days
+    // return first 7 days
     return Object.values(dailyData).slice(0, 7);
   }
 }

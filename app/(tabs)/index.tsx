@@ -34,31 +34,31 @@ export default function HomeScreen() {
 
   const initializeLocation = async () => {
     try {
-      console.log('Requesting location permission...');
+      console.log('asking for location permission...');
       const hasPermission = await LocationService.requestLocationPermission();
       setLocationPermissionGranted(hasPermission);
       
       if (hasPermission) {
-        console.log('Permission granted, getting current location...');
+        console.log('permission ok, getting location...');
         const location = await LocationService.getCurrentLocation();
         if (location) {
-          console.log('Location found:', location.name, location.country);
+          console.log('got location:', location.name, location.country);
           await fetchWeatherByLocation(location.lat, location.lon);
         } else {
-          console.log('No location data received, trying default city...');
+          console.log('no location data, using karachi...');
           await fetchWeatherByCity('Karachi');
         }
       } else {
-        console.log('Location permission denied, trying default city...');
+        console.log('permission denied, using karachi...');
         await fetchWeatherByCity('Karachi');
       }
     } catch (error) {
-      console.error('Error initializing location:', error);
-      // Only try default city if location completely fails
+      console.error('location error:', error);
+      // fallback to karachi
       try {
         await fetchWeatherByCity('Karachi');
       } catch (fallbackError) {
-        console.log('Default city fetch failed:', fallbackError);
+        console.log('karachi fetch failed:', fallbackError);
       }
       setLocationPermissionGranted(false);
     }
