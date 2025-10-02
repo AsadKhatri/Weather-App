@@ -161,8 +161,7 @@ export class WeatherAPI {
   private processDailyForecast(forecastList: any[]): any[] {
     let dailyData: any = {};
     
-    // just take first 7 items and group them
-    for (let i = 0; i < forecastList.length && i < 7; i++) {
+    for (let i = 0; i < forecastList.length; i++) {
       let item = forecastList[i];
       let date = new Date(item.dt * 1000);
       let dayKey = date.toDateString();
@@ -184,27 +183,31 @@ export class WeatherAPI {
           pop: item.pop,
         };
       } else {
-        // keep the min and max temps
+        // update min and max temps
         if (item.main.temp_min < dailyData[dayKey].main.temp_min) {
           dailyData[dayKey].main.temp_min = item.main.temp_min;
         }
         if (item.main.temp_max > dailyData[dayKey].main.temp_max) {
           dailyData[dayKey].main.temp_max = item.main.temp_max;
         }
+        // use latest humidity and wind data
         dailyData[dayKey].main.humidity = item.main.humidity;
         dailyData[dayKey].wind = item.wind;
+        // use max precipitation
         if (item.pop > dailyData[dayKey].pop) {
           dailyData[dayKey].pop = item.pop;
         }
       }
     }
     
-    // convert to array
+    // convert to array and sort by date
     let result = [];
     for (let key in dailyData) {
       result.push(dailyData[key]);
     }
     
-    return result;
+    // sort by date and return first 7 days
+    result.sort((a, b) => a.dt - b.dt);
+    return result.slice(0, 7);
   }
 }
