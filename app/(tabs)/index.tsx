@@ -107,13 +107,18 @@ export default function HomeScreen() {
   };
 
   const handleAddToFavorites = (city: Location) => {
-    const isAlreadyFavorite = favorites.some(
-      fav => fav.lat === city.lat && fav.lon === city.lon
-    );
+    // check if already favorite
+    let alreadyFavorite = false;
+    for (let i = 0; i < favorites.length; i++) {
+      if (favorites[i].lat === city.lat && favorites[i].lon === city.lon) {
+        alreadyFavorite = true;
+        break;
+      }
+    }
     
-    if (!isAlreadyFavorite) {
-      const newFavorite: FavoriteCity = {
-        id: `${city.lat}-${city.lon}-${Date.now()}`,
+    if (!alreadyFavorite) {
+      let newFavorite: FavoriteCity = {
+        id: city.lat + '-' + city.lon + '-' + Date.now(),
         name: city.name,
         country: city.country,
         lat: city.lat,
@@ -121,16 +126,21 @@ export default function HomeScreen() {
         addedAt: Date.now(),
       };
       addToFavorites(newFavorite);
-      Alert.alert('Success', `${city.name} added to favorites!`);
+      Alert.alert('Success', city.name + ' added to favorites!');
     } else {
-      Alert.alert('Already Added', `${city.name} is already in your favorites.`);
+      Alert.alert('Already Added', city.name + ' is already in your favorites.');
     }
   };
 
   const renderSearchResult = ({ item }: { item: Location }) => {
-    const isFavorite = favorites.some(
-      fav => fav.lat === item.lat && fav.lon === item.lon
-    );
+    // check if favorite
+    let isFavorite = false;
+    for (let i = 0; i < favorites.length; i++) {
+      if (favorites[i].lat === item.lat && favorites[i].lon === item.lon) {
+        isFavorite = true;
+        break;
+      }
+    }
 
     return (
       <View style={styles.searchResultItem}>

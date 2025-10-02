@@ -153,18 +153,19 @@ export class WeatherAPI {
   }
 
   getWindDirection(deg: number): string {
-    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-    const index = Math.round(deg / 45) % 8;
+    let directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+    let index = Math.round(deg / 45) % 8;
     return directions[index];
   }
 
   private processDailyForecast(forecastList: any[]): any[] {
-    const dailyData: { [key: string]: any } = {};
+    let dailyData: any = {};
     
-    // group by day
-    forecastList.forEach((item: any) => {
-      const date = new Date(item.dt * 1000);
-      const dayKey = date.toDateString();
+    // just take first 7 items and group them
+    for (let i = 0; i < forecastList.length && i < 7; i++) {
+      let item = forecastList[i];
+      let date = new Date(item.dt * 1000);
+      let dayKey = date.toDateString();
       
       if (!dailyData[dayKey]) {
         dailyData[dayKey] = {
@@ -181,20 +182,29 @@ export class WeatherAPI {
             deg: item.wind.deg,
           },
           pop: item.pop,
-          items: [item]
         };
       } else {
-        // update min/max temps
-        dailyData[dayKey].main.temp_min = Math.min(dailyData[dayKey].main.temp_min, item.main.temp_min);
-        dailyData[dayKey].main.temp_max = Math.max(dailyData[dayKey].main.temp_max, item.main.temp_max);
-        dailyData[dayKey].main.humidity = item.main.humidity; // latest humidity
-        dailyData[dayKey].wind = item.wind; // latest wind
-        dailyData[dayKey].pop = Math.max(dailyData[dayKey].pop, item.pop); // max precipitation
-        dailyData[dayKey].items.push(item);
+        // keep the min and max temps
+        if (item.main.temp_min < dailyData[dayKey].main.temp_min) {
+          dailyData[dayKey].main.temp_min = item.main.temp_min;
+        }
+        if (item.main.temp_max > dailyData[dayKey].main.temp_max) {
+          dailyData[dayKey].main.temp_max = item.main.temp_max;
+        }
+        dailyData[dayKey].main.humidity = item.main.humidity;
+        dailyData[dayKey].wind = item.wind;
+        if (item.pop > dailyData[dayKey].pop) {
+          dailyData[dayKey].pop = item.pop;
+        }
       }
-    });
+    }
     
-    // return first 7 days
-    return Object.values(dailyData).slice(0, 7);
+    // convert to array
+    let result = [];
+    for (let key in dailyData) {
+      result.push(dailyData[key]);
+    }
+    
+    return result;
   }
 }
